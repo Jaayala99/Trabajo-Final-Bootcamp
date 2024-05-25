@@ -66,6 +66,15 @@ TRABAJO/
 │ ├── analisis_dataset/
 │ │ ├── analisis.ipynb
 │ │ └── preprocess/
+├── chatbot/
+│ │ ├── datos/
+│ │ │ ├── datos_chatbot.csv
+│ │ │ └── datos_chatbot.json
+| | | └── datos.ipynb
+│ │ └── modelo/
+│ │ ├── train_chatbot.ipynb
+│ │ └── gpt2-question-answering (datos modelo preentrenado)
+| | └── logs (datos modelo preentrenado)
 │ ├── dataset/
 │ │ ├── megaGymDataset.csv
 │ │ ├── megaGymDataset_clean.csv
@@ -103,6 +112,17 @@ TRABAJO/
 
     - analisis.ipynb ----> Archivo donde analizamos todas las variables de nuestro dataset, valores NaN, posibles outliers, explicación de nuestras variables...
     - preprocess_dataset.ipynb ----> Archivo donde preprocesamos todo nuestro dataset, nos encargamos de la normalizacion de nuestras variables, clasificación de las variables categoricas...
+
+- **chatbot/**
+    - **datos/**
+        - datos_chatbot.csv 
+        - datos_chatbot.json 
+        - datos.ipynb ----> Archivo donde convertimos los datos de nuestro dataset de huggingçface a csv y json 
+
+    - **modelo/**
+        - train_chatbot.ipynb ----> Archivo donde entrenamos nuestro modelo gpt2 con los datos anteriormente descargados de huggingface
+        - gpt2-question-answering ----> Archivos con datos de nuestro modelo preentrenado
+        - logs ----> Archivos con datos de nuestro modelo preentrenado
 
 - **dataset/** 
     - megaGymDataset.csv 
