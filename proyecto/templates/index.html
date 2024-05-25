@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Ejercicios (Inglés)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .container {
+            display: flex;
+        }
+        .content, .chatbot {
+            flex: 1;
+            
+        }
+        .chatbot {
+            border-left: 1px solid #ccc;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <div class="content">
+            <h1>Buscador de Ejercicios</h1>
+            <p>***introduce todo el texto en inglés, por favor.***</p>
+            <form action="/proyecto/app.py/respuesta_ejercicio" id="ejercicios_principales" method="post">
+                <label for="parte_cuerpo">Parte del Cuerpo que deseas entrenar (biceps, triceps, lats, chest...):</label>
+                <input type="text" id="parte_cuerpo" name="parte_cuerpo">
+                <button type="submit">Buscar</button>
+            </form>
+
+            <h2 id="titulo_resultados">Rutina:</h2>
+            <div id="respuesta"></div>
+
+            <div id="formulario_despues" style="display: none;">
+                <!-- Formulario de elección agragar ejercicio o finalizar rutina -->
+                <form id="form_agregar">
+                    <button type="button" id="boton_añadir">Añadir ejercicio</button>
+                    <button type="submit" id="nueva_rutina">Nueva Rutina</button>
+                    <button type="submit" id="boton_finalizar">Finalizar rutina</button>
+                    <button type="submit" id="boton_similares">Buscar similares</button>
+                    <br>
+                </form>
+                <br>
+                <form action="/proyecto/app.py/respuesta_ejercicio" style="display: none" id="añadir_ejercicio">
+                    <label for="parte_cuerpo_nuevo">Parte del cuerpo del Ejercicio a añadir:</label>
+                    <input type="text" name="parte_cuerpo_nuevo" id="parte_cuerpo_nuevo">
+                    <button type="submit">Añadir</button>
+                </form>
+
+                <form action="/proyecto/app.py/buscar_similitud" id="ejercicios_similares" method="post" style="display: none;">
+                    <label for="sustituir">Ejercicio de referencia :</label>
+                    <input type="text" id="sustituir" name="sustituir">
+                    <button type="submit">Buscar</button>
+                </form>
+            </div>
+            <br>
+            <br>
+            <p style="display: none;" id="simil"><strong>Ejercicios más similares :</strong></p>
+            <div id="respuesta_similares"></div>
+            <form id="opciones">
+                <button style="display: none;" id="buscar_de_nuevo">Buscar similitudes de otro ejercicio</button>
+                <button style="display: none;" id="volver_rutina">Volver a la rutina</button>
+            </form>
+            <br>
+            <br>
+            <div id="rating" style="display: none;">
+                <p>Por favor, valora la rutina generada <i class="bi bi-emoji-smile"></i></p>
+                <i class="bi bi-star-fill" style="font-size: 20px; color: #bbb; cursor: pointer;" onclick="changeColor(this)"></i>
+                <i class="bi bi-star-fill" style="font-size: 20px; color: #bbb; cursor: pointer;" onclick="changeColor(this)"></i>
+                <i class="bi bi-star-fill" style="font-size: 20px; color: #bbb; cursor: pointer;" onclick="changeColor(this)"></i>
+                <i class="bi bi-star-fill" style="font-size: 20px; color: #bbb; cursor: pointer;" onclick="changeColor(this)"></i>
+                <i class="bi bi-star-fill" style="font-size: 20px; color: #bbb; cursor: pointer;" onclick="changeColor(this)"></i>
+                <p id="mensaje_agradecimineto" style="display: none;">¡¡ Muchas gracias por tu voto !!</p>
+            </div>
+        </div>
+
+        <div class="chatbot">
+            <h1 style="margin-left: 30px;">Asistente Fitness</h1>
+            <p style="margin-left: 30px;">***introduce todo el texto en inglés, por favor.***</p>
+            <form id="chatbot_form" action="/proyecto/app.py/generar_respuesta" method="post" style="margin-left: 30px;">
+                <textarea id="chatbot_input" name="chatbot_input" rows="10" cols="80" placeholder="Escribe aquí tu pregunta..."></textarea>
+                <button type="submit">preguntar</button>
+            </form>
+            <div></div>
+            <textarea id="chatbot_response" rows="10" cols="80" placeholder="Respuesta Generada" style="margin-left: 30px;"></textarea>
+        </div>
+    </div>
+
+    <script>
+        // Función para enviar el formulario y mostrar la respuesta en el div 'respuesta'
+        document.getElementById('ejercicios_principales').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            fetch("../respuesta_ejercicio", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Mostrar la respuesta
+                document.getElementById('respuesta').innerHTML = data;
+                // Mostrar el formulario
+                document.getElementById('formulario_despues').style.display = 'block';
+            });
+        });
+
+        document.getElementById('ejercicios_similares').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            fetch("../buscar_similitud", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Mostrar ejercicios similares
+                document.getElementById('simil').style.display = 'block'
+                document.getElementById('respuesta_similares').innerHTML = data;
+                document.getElementById('buscar_de_nuevo').style.display = 'block'
+                document.getElementById('volver_rutina').style.display = 'block'
+                document.getElementById('opciones').style.display = 'block'
+            });
+        });
+
+        // Acción cuando se pulsa el botón "Añadir" y añadir nuevo ejercicio 
+        document.getElementById('añadir_ejercicio').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            fetch("../respuesta_ejercicio", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Mostrar la respuesta en el div
+                document.getElementById('respuesta').innerHTML += data;
+                // Ocultar el formulario de añadir ejercicio
+                document.getElementById('añadir_ejercicio').style.display = 'none';
+                // Mostrar el formulario de elección de acción
+                document.getElementById('formulario_despues').style.display = 'block';
+            });
+        });
+
+        // Acción cuando se pulsa el botón "Añadir Ejercicio" , "Finalizar Rutina" y "Nueva Rutina"
+        document.getElementById('boton_añadir').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('añadir_ejercicio').style.display = 'block';
+        });
+
+        document.getElementById('boton_finalizar').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('rating').style.display = 'block';
+            document.getElementById('ejercicios_similares').style.display = 'none';
+            document.getElementById('simil').style.display = 'none';
+            document.getElementById('respuesta_similares').style.display = 'none';
+            document.getElementById('opciones').style.display = 'none';
+            document.getElementById('añadir_ejercicio').style.display = 'none';
+        });
+
+        document.getElementById('boton_similares').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('ejercicios_similares').style.display = 'block';
+        });
+
+        document.getElementById('nueva_rutina').addEventListener('click', function(e) {
+            e.preventDefault();
+            location.reload();
+        });
+
+        function changeColor(element) {
+            document.getElementById('mensaje_agradecimineto').style.display = 'block';
+            var stars = document.querySelectorAll('.bi-star-fill');
+            var index = Array.from(stars).indexOf(element);
+
+            for (var i = 0; i <= index; i++) {
+                stars[i].style.color = '#ffcc00';
+            }
+
+            for (var j = index + 1; j < stars.length; j++) {
+                stars[j].style.color = '#bbb';
+            }
+        }
+
+        document.getElementById('buscar_de_nuevo').addEventListener('click', function(e) {
+        e.preventDefault();
+        // Ocultar resultados anteriores
+        document.getElementById('simil').style.display = 'none';
+        document.getElementById('respuesta_similares').innerHTML = '';
+        document.getElementById('opciones').style.display = 'none';
+
+        // Mostrar el formulario de búsqueda de ejercicios similares
+        document.getElementById('ejercicios_similares').style.display = 'block';
+        });
+
+
+        document.getElementById('volver_rutina').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('respuesta_similares').style.display = 'none';
+            document.getElementById('simil').style.display = 'none';
+            document.getElementById('ejercicios_similares').style.display = 'none';
+            document.getElementById('opciones').style.display = 'none';
+        });
+
+
+        document.getElementById('chatbot_form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            fetch("../generar_respuesta", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('chatbot_response').innerText = data;
+            });
+        });
+
+    </script>
+
+</body>
+</html>
