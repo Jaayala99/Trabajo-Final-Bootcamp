@@ -165,3 +165,5 @@ enviroment.yml ----> Archivo donde se almacenan todas las dependencias de nuestr
 # Archivos utilizados 
 - **Dataset Kaggle** = https://www.kaggle.com/datasets/niharika41298/gym-exercise-data
 - **Modelo HuggingFace** = https://huggingface.co/sentence-transformers/paraphrase-MiniLM-L6-v2
+- **Dataset_chatbot** = https://huggingface.co/datasets/HazSylvia/Fitness_Unformatted
+- **Modelo_chatbot** = https://huggingface.co/openai-community/gpt2
