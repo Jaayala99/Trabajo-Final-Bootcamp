@@ -90,7 +90,7 @@ def find_similar_exercises_by_title(title, n=5):
     query_embedding = embeddings[0].reshape(1, -1)
     description_embeddings = embeddings[1:]
 
-    # Calcular similitud coseno entre el embedding de consulta y los embeddings de las descripciones de los ejercicios
+    #Calcular similitud coseno entre el embedding de consulta y los embeddings de las descripciones de los ejercicios
     similarities = cosine_similarity(query_embedding, description_embeddings)[0]
 
     similar_indices = similarities.argsort()[::-1][:n]
@@ -99,16 +99,16 @@ def find_similar_exercises_by_title(title, n=5):
     return similar_exercises
 
 
-# Paso 1: Cargar el modelo y el tokenizador entrenados
+#Cargar el modelo y el tokenizador entrenados
 model_path = "../lab/chatbot/modelo/gpt2-question-answering"
 model_chatbot = GPT2LMHeadModel.from_pretrained(model_path)
 tokenizer = GPT2Tokenizer.from_pretrained(model_path)
 tokenizer.pad_token = tokenizer.eos_token  # Ajustar el token de padding
 
-# Paso 2: Ajustar el tokenizer para evitar advertencias
+# Ajustar el tokenizer para evitar advertencias
 tokenizer.padding_side = "left"
 
-# Paso 3: Función para generar respuestas en formato HTML
+#Función para generar respuestas en formato HTML
 def generate_response(question, model_chatbot, tokenizer, max_length=512, max_new_tokens=50):
         """
      Genera una respuesta basada en la pregunta proporcionada utilizando un modelo GPT-2.
@@ -129,7 +129,6 @@ def generate_response(question, model_chatbot, tokenizer, max_length=512, max_ne
             f"Question: {question}"
         )
         inputs = tokenizer(prompt, return_tensors="pt", truncation=True, padding="max_length", max_length=max_length)
-        
         # Generar la respuesta
         output = model_chatbot.generate(
             input_ids=inputs["input_ids"],
@@ -140,7 +139,6 @@ def generate_response(question, model_chatbot, tokenizer, max_length=512, max_ne
             early_stopping=True,
             pad_token_id=tokenizer.eos_token_id  # Asegurar el uso del token de padding correcto
         )
-        
         # Decodificar la respuesta
         answer = tokenizer.decode(output[0], skip_special_tokens=True)
         # Extraer solo la parte de la respuesta generada

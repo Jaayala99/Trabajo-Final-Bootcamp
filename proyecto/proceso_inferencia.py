@@ -11,7 +11,7 @@ model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
 with open("datos_json/datos_ejercicios_submuestreo.json", "r", encoding="utf-8") as file:
     exercise_data = json.load(file)
 
-# Cargar el modelo preentrenado de Sentence Transformers
+#Cargar el modelo preentrenado de Sentence Transformers
 model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
 
 def clean_description(description):
@@ -36,10 +36,10 @@ def find_similar_exercises(body_part, top_n=10):
         print(f"No se encontraron ejercicios para la parte del cuerpo '{body_part}' en el conjunto de datos.")
         return []
 
-    # Preprocesar las descripciones de los ejercicios
+    #Preprocesar las descripciones de los ejercicios
     descripcion_ejercicio = [exercise["Desc"] for exercise in buscar_ejercicios]
 
-    # Obtener embeddings de las descripciones de los ejercicios
+    #Obtener embeddings de las descripciones de los ejercicios
     exercise_embeddings = model.encode(descripcion_ejercicio, convert_to_tensor=True)
     
     def cosine_similarity(query_embedding):
@@ -103,13 +103,13 @@ def find_similar_exercises_by_title(title, n=5):
 
 
 
-# Paso 1: Cargar el modelo y el tokenizador entrenados
+#Cargar el modelo y el tokenizador entrenados
 model_path = "../lab/chatbot/modelo/gpt2-question-answering"
 model_chatbot = GPT2LMHeadModel.from_pretrained(model_path)
 tokenizer = GPT2Tokenizer.from_pretrained(model_path)
 tokenizer.pad_token = tokenizer.eos_token  # Ajustar el token de padding
 
-# Paso 2: Ajustar el tokenizer para evitar advertencias
+#Ajustar el tokenizer para evitar advertencias
 tokenizer.padding_side = "left"
 
 
